@@ -1,68 +1,108 @@
-import React from "react";
-import { Flex, VStack, Box, Link as ChakraLink, Text, extendTheme, ChakraProvider } from "@chakra-ui/react";
-import { FaUserGroup } from "react-icons/fa6";
-import { MdForum } from "react-icons/md";
-import { GiAbstract050 } from "react-icons/gi";
+'use client'
 
-// Extend Chakra UI theme to customize link styles
-const theme = extendTheme({
-  components: {
-    Flex: {
-      baseStyle: {
-        _hover: {
-          background: "rgba(0, 0, 255, 0.1)", // Hover effect for the entire Flex container
-          borderRadius: "8px",
-          width: "150%", // Rounded edges on hover
-        },
-      },
-    },
-    Link: {
-      baseStyle: {
-        _hover: {
-          color: "gray.500",
-          textDecoration: "underline",
-        },
-      },
-    },
-  },
-});
+import {
+  Box,
+  Flex,
+  Avatar,
+  Text,
+  Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  useDisclosure,
+  useColorModeValue,
+  Stack,
+  useColorMode,
+  Center,
+  Icon,
+} from '@chakra-ui/react'
+import { MoonIcon, SunIcon } from '@chakra-ui/icons'
+import { IoMdBook } from "react-icons/io";
 
-const NavigationBar = () => {
+
+
+// ... (previous imports)
+
+interface Props {
+  children: React.ReactNode;
+  href: string;
+}
+
+const NavLink = (props: Props) => {
+  const { children } = props;
+
   return (
-    <ChakraProvider theme={theme}>
-      <Flex direction="column" p="4" bg="gray.100" color="gray.500" h="100vh" className="navbar">
-        <Text fontSize="xl" fontWeight="bold" mb="4" fontFamily="monospace">
-          Hello RITHVIK
-        </Text>
-        <VStack spacing="4">
-          <Box>
-            <Flex align="center" _hover={{ background: "rgba(0, 0, 255, 0.1)", borderRadius: "8px" }}>
-              <ChakraLink href="#" fontSize="lg" fontWeight="bold" paddingRight={4}>
-                Clubs
-              </ChakraLink>
-              <FaUserGroup />
-            </Flex>
-          </Box>
-          <Box>
-            <Flex align="center" _hover={{ background: "rgba(0, 0, 255, 0.1)", borderRadius: "8px" }}>
-              <ChakraLink href="#" fontSize="lg" fontWeight="bold" paddingRight={3}>
-                Forums
-              </ChakraLink>
-              <MdForum />
-            </Flex>
-          </Box>
-          <Box>
-            <Flex align="center" _hover={{ background: "rgba(0, 0, 255, 0.1)", borderRadius: "8px" }}>
-              <ChakraLink href="#" fontSize="lg" fontWeight="bold" paddingRight={2}>
-                Categories
-              </ChakraLink>
-              <GiAbstract050 />
-            </Flex>
-          </Box>
-        </VStack>
-      </Flex>
-    </ChakraProvider>
+    <Box
+      as="a"
+      px={2}
+      py={1}
+      rounded={'md'}
+      _hover={{
+        textDecoration: 'none',
+        bg: useColorModeValue('gray.200', 'gray.700'),
+      }}
+      href={props.href}>
+      {children}
+    </Box>
   );
 };
 
-export default NavigationBar;
+export default function NavBar() {
+  const { colorMode, toggleColorMode } = useColorMode();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  return (
+    <>
+      <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+        <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
+          <Icon boxSize={12} paddingLeft={5} as={IoMdBook} />
+
+          <Flex alignItems={'center'}>
+            <Stack direction={'row'} spacing={7}>
+              <NavLink href="/register">Sign Up</NavLink>
+              <NavLink href="/login">Log In</NavLink>
+
+              <Button onClick={toggleColorMode}>
+                {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+              </Button>
+
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rounded={'full'}
+                  variant={'link'}
+                  cursor={'pointer'}
+                  minW={0}>
+                  <Avatar
+                    size={'sm'}
+                    src={'https://avatars.dicebear.com/api/male/username.svg'}
+                  />
+                </MenuButton>
+                <MenuList alignItems={'center'}>
+                  <br />
+                  <Center>
+                    <Avatar
+                      size={'2xl'}
+                      src={'https://avatars.dicebear.com/api/male/username.svg'}
+                    />
+                  </Center>
+                  <br />
+                  <Center>
+                    <p>Username</p>
+                  </Center>
+                  <br />
+                  <MenuDivider />
+                  <MenuItem>Your Servers</MenuItem>
+                  <MenuItem>Account Settings</MenuItem>
+                  <MenuItem>Logout</MenuItem>
+                </MenuList>
+              </Menu>
+            </Stack>
+          </Flex>
+        </Flex>
+      </Box>
+    </>
+  );
+}
